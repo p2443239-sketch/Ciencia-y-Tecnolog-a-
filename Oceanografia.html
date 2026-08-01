@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario: Los Océanos - Ciencia y Tecnología</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0284c7;
+            --primary-dark: #0369a1;
+            --accent: #38bdf8;
+            --bg-color: #f0f9ff;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --success: #16a34a;
+            --error: #dc2626;
+            --border: #bae6fd;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 750px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.1), 0 8px 10px -6px rgba(2, 132, 199, 0.1);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .progress-bar-container {
+            background: rgba(255, 255, 255, 0.2);
+            height: 8px;
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        .progress-bar {
+            background: #38bdf8;
+            height: 100%;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .quiz-body {
+            padding: 2rem;
+        }
+
+        /* Pantalla de Acceso */
+        #loginScreen {
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        #loginScreen h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+        }
+
+        .login-input {
+            width: 100%;
+            max-width: 350px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .login-input:focus {
+            border-color: var(--primary);
+        }
+
+        .login-error {
+            color: var(--error);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .main-app {
+            display: none;
+        }
+
+        .question-container {
+            display: none;
+        }
+
+        .question-container.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-number {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .question-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .option-btn {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            text-align: left;
+            font-size: 1rem;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: #f0fdf4;
+            border-color: var(--accent);
+        }
+
+        .option-btn.correct {
+            background: #dcfce7 !important;
+            border-color: var(--success) !important;
+            color: #166534 !important;
+            font-weight: 600;
+        }
+
+        .option-btn.incorrect {
+            background: #fee2e2 !important;
+            border-color: var(--error) !important;
+            color: #991b1b !important;
+        }
+
+        .option-letter {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .option-btn.correct .option-letter {
+            background: var(--success);
+            color: white;
+        }
+
+        .option-btn.incorrect .option-letter {
+            background: var(--error);
+            color: white;
+        }
+
+        .feedback-box {
+            background: #f8fafc;
+            border-left: 4px solid var(--primary);
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.5rem;
+            display: none;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .feedback-box strong {
+            color: var(--text-main);
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+        }
+
+        .results-container {
+            display: none;
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .results-container h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 1.5rem auto;
+            box-shadow: 0 10px 15px -3px rgba(2, 132, 199, 0.3);
+        }
+
+        .results-msg {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Cuestionario de Ciencia y Tecnología</h1>
+            <p>Los Océanos y su impacto global</p>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="quiz-body">
+            
+            <!-- PANTALLA DE ACCESO POR CLAVE -->
+            <div id="loginScreen">
+                <h3>Ingresa la clave proporcionada por tu docente</h3>
+                <input type="password" id="accessKey" class="login-input" placeholder="Ej. noveno 2026">
+                <div class="login-error" id="loginError">Clave incorrecta. Inténtalo de nuevo.</div>
+                <div>
+                    <button class="btn" onclick="verifyKey()">Ingresar al Cuestionario</button>
+                </div>
+            </div>
+
+            <!-- APLICACIÓN PRINCIPAL (OCULTA HASTA VALIDAR) -->
+            <div class="main-app" id="mainApp">
+                <div id="quizForm">
+                    
+                    <!-- Pregunta 1 -->
+                    <div class="question-container active" data-question="0">
+                        <div class="question-number">Pregunta 1 de 5</div>
+                        <div class="question-title">¿Qué nombre recibe la gran cinta transportadora oceánica global impulsada por diferencias de temperatura y salinidad?</div>
+                        <div class="options-list">
+                            <button class="option-btn" onclick="selectOption(this, 'A', 'B')">
+                                <span class="option-letter">A</span> Corriente de Humboldt
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'B', 'B')">
+                                <span class="option-letter">B</span> Circulación termohalina
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'C', 'B')">
+                                <span class="option-letter">C</span> Giro subtropical
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'D', 'B')">
+                                <span class="option-letter">D</span> Corriente del Golfo
+                            </button>
+                        </div>
+                        <div class="feedback-box" id="feedback-0">
+                            <strong>Nota:</strong> Regula el clima global al mover agua cálida y fría por todo el planeta.
+                        </div>
+                    </div>
+
+                    <!-- Pregunta 2 -->
+                    <div class="question-container" data-question="1">
+                        <div class="question-number">Pregunta 2 de 5</div>
+                        <div class="question-title">¿Cuál es la principal causa química de la acidificación de los océanos?</div>
+                        <div class="options-list">
+                            <button class="option-btn" onclick="selectOption(this, 'A', 'C')">
+                                <span class="option-letter">A</span> El aumento de la temperatura superficial del agua.
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'B', 'C')">
+                                <span class="option-letter">B</span> El vertido de residuos plásticos y microplásticos.
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'C', 'C')">
+                                <span class="option-letter">C</span> La absorción de dióxido de carbono (CO₂) atmosférico por parte del agua de mar.
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'D', 'C')">
+                                <span class="option-letter">D</span> La escorrentía de fertilizantes agrícolas ricos en nitrógeno.
+                            </button>
+                        </div>
+                        <div class="feedback-box" id="feedback-1">
+                            <strong>Nota:</strong> Al disolverse el CO₂, se forma ácido carbónico, lo que disminuye el pH del agua y afecta a organismos con conchas calcáreas.
+                        </div>
+                    </div>
+
+                    <!-- Pregunta 3 -->
+                    <div class="question-container" data-question="2">
+                        <div class="question-number">Pregunta 3 de 5</div>
+                        <div class="question-title">¿Qué tecnología se utiliza principalmente para mapear el fondo marino mediante la emisión de pulsos acústicos desde un barco?</div>
+                        <div class="options-list">
+                            <button class="option-btn" onclick="selectOption(this, 'A', 'C')">
+                                <span class="option-letter">A</span> Radar de apertura sintética (SAR)
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'B', 'C')">
+                                <span class="option-letter">B</span> Espectroscopía infrarroja
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'C', 'C')">
+                                <span class="option-letter">C</span> Sonar multihaz (Multibeam sonar)
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'D', 'C')">
+                                <span class="option-letter">D</span> LiDAR aerotransportado
+                            </button>
+                        </div>
+                        <div class="feedback-box" id="feedback-2">
+                            <strong>Nota:</strong> Permite obtener imágenes y modelos batimétricos de alta resolución del relieve submarino.
+                        </div>
+                    </div>
+
+                    <!-- Pregunta 4 -->
+                    <div class="question-container" data-question="3">
+                        <div class="question-number">Pregunta 4 de 5</div>
+                        <div class="question-title">¿En qué zona del océano se encuentra la mayor parte de la biomasa marina y ocurre la fotosíntesis?</div>
+                        <div class="options-list">
+                            <button class="option-btn" onclick="selectOption(this, 'A', 'B')">
+                                <span class="option-letter">A</span> Zona abisal
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'B', 'B')">
+                                <span class="option-letter">B</span> Zona eufótica (o fótica)
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'C', 'B')">
+                                <span class="option-letter">C</span> Zona batial
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'D', 'B')">
+                                <span class="option-letter">D</span> Zona hadal
+                            </button>
+                        </div>
+                        <div class="feedback-box" id="feedback-3">
+                            <strong>Nota:</strong> Es la capa superior del océano donde penetra la luz solar suficiente para que el fitoplancton realice la fotosíntesis.
+                        </div>
+                    </div>
+
+                    <!-- Pregunta 5 -->
+                    <div class="question-container" data-question="4">
+                        <div class="question-number">Pregunta 5 de 5</div>
+                        <div class="question-title">¿Qué fenómeno oceanográfico y meteorológico altera periódicamente las corrientes en el Pacífico ecuatorial, afectando el clima global?</div>
+                        <div class="options-list">
+                            <button class="option-btn" onclick="selectOption(this, 'A', 'A')">
+                                <span class="option-letter">A</span> La Corriente de El Niño (ENSO)
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'B', 'A')">
+                                <span class="option-letter">B</span> La oscilación decadal del Pacífico
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'C', 'A')">
+                                <span class="option-letter">C</span> El colapso del vórtice polar
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'D', 'A')">
+                                <span class="option-letter">D</span> Las mareas vivas equinocciales
+                            </button>
+                        </div>
+                        <div class="feedback-box" id="feedback-4">
+                            <strong>Nota:</strong> Forma parte de El Niño-Oscilación del Sur, alterando los patrones de lluvia y temperatura en múltiples continentes.
+                        </div>
+                    </div>
+
+                    <!-- Botón Siguiente -->
+                    <div class="btn-container" style="margin-top: 2rem;">
+                        <button class="btn" id="nextBtn" onclick="nextQuestion()" disabled>Siguiente</button>
+                    </div>
+
+                </div>
+
+                <!-- Resultados -->
+                <div class="results-container" id="resultsContainer">
+                    <h2>¡Cuestionario Completado!</h2>
+                    <div class="score-circle" id="scoreCircle">0/5</div>
+                    <div class="results-msg" id="resultsMsg">Has finalizado la prueba interactiva sobre los océanos.</div>
+                    <button class="btn" onclick="restartQuiz()">Reiniciar Cuestionario</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Clave de acceso configurada
+        const CLAVE_CORRECTA = "noveno 2026";
+
+        function verifyKey() {
+            const inputVal = document.getElementById('accessKey').value.trim();
+            const errorDiv = document.getElementById('loginError');
+
+            if (inputVal === CLAVE_CORRECTA) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                document.getElementById('progressBar').style.width = '20%';
+            } else {
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        // Permitir presionar "Enter" en el input de clave
+        document.getElementById('accessKey').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifyKey();
+            }
+        });
+
+        let currentQuestion = 0;
+        let score = 0;
+        const totalQuestions = 5;
+        let answered = false;
+
+        function selectOption(button, chosenLetter, correctLetter) {
+            if (answered) return;
+            answered = true;
+
+            const container = document.querySelector(`.question-container[data-question="${currentQuestion}"]`);
+            const buttons = container.querySelectorAll('.option-btn');
+            
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                const letter = btn.querySelector('.option-letter').textContent.trim();
+                if (letter === correctLetter) {
+                    btn.classList.add('correct');
+                } else if (letter === chosenLetter && chosenLetter !== correctLetter) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            if (chosenLetter === correctLetter) {
+                score++;
+            }
+
+            const feedbackBox = document.getElementById(`feedback-${currentQuestion}`);
+            feedbackBox.style.display = 'block';
+
+            document.getElementById('nextBtn').disabled = false;
+            if (currentQuestion === totalQuestions - 1) {
+                document.getElementById('nextBtn').textContent = 'Ver Resultados';
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            answered = false;
+            document.getElementById('nextBtn').disabled = true;
+
+            if (currentQuestion < totalQuestions) {
+                document.querySelectorAll('.question-container').forEach(el => el.classList.remove('active'));
+                document.querySelector(`.question-container[data-question="${currentQuestion}"]`).classList.add('active');
+                
+                const progress = ((currentQuestion) / totalQuestions) * 100;
+                document.getElementById('progressBar').style.width = progress + '%';
+            } else {
+                document.getElementById('quizForm').style.display = 'none';
+                document.getElementById('resultsContainer').style.display = 'block';
+                document.getElementById('progressBar').style.width = '100%';
+                
+                document.getElementById('scoreCircle').textContent = `${score}/${totalQuestions}`;
+                
+                let msg = "";
+                if (score === 5) {
+                    msg = "¡Excelente trabajo! Tienes un dominio perfecto sobre los océanos y la tecnología marina.";
+                } else if (score >= 3) {
+                    msg = "¡Muy bien! Tienes buenos conocimientos sobre las ciencias oceánicas.";
+                } else {
+                    msg = "Buen intento. Puedes repasar los conceptos y volver a intentarlo para mejorar tu puntuación.";
+                }
+                document.getElementById('resultsMsg').textContent = msg;
+            }
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            answered = false;
+            
+            document.getElementById('resultsContainer').style.display = 'none';
+            document.getElementById('quizForm').style.display = 'block';
+            document.getElementById('nextBtn').textContent = 'Siguiente';
+            document.getElementById('nextBtn').disabled = true;
+            document.getElementById('progressBar').style.width = '20%';
+
+            document.querySelectorAll('.question-container').forEach((el, index) => {
+                el.classList.remove('active');
+                if (index === 0) el.classList.add('active');
+            });
+
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove('correct', 'incorrect');
+            });
+
+            document.querySelectorAll('.feedback-box').forEach(fb => {
+                fb.style.display = 'none';
+            });
+        }
+    </script>
+</body>
+</html>
