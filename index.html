@@ -33,6 +33,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             padding: 2rem 1rem;
         }
 
@@ -77,12 +78,52 @@
         .progress-bar {
             background: #38bdf8;
             height: 100%;
-            width: 20%;
+            width: 0%;
             transition: width 0.4s ease;
         }
 
         .quiz-body {
             padding: 2rem;
+        }
+
+        /* Pantalla de Acceso */
+        #loginScreen {
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        #loginScreen h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+        }
+
+        .login-input {
+            width: 100%;
+            max-width: 350px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .login-input:focus {
+            border-color: var(--primary);
+        }
+
+        .login-error {
+            color: var(--error);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .main-app {
+            display: none;
         }
 
         .question-container {
@@ -143,13 +184,6 @@
             border-color: var(--accent);
         }
 
-        .option-btn.selected {
-            background: #e0f2fe;
-            border-color: var(--primary);
-            color: var(--primary-dark);
-            font-weight: 600;
-        }
-
         .option-btn.correct {
             background: #dcfce7 !important;
             border-color: var(--success) !important;
@@ -175,11 +209,6 @@
             font-size: 0.85rem;
             color: var(--text-muted);
             flex-shrink: 0;
-        }
-
-        .option-btn.selected .option-letter {
-            background: var(--primary);
-            color: white;
         }
 
         .option-btn.correct .option-letter {
@@ -235,7 +264,6 @@
             cursor: not-allowed;
         }
 
-        /* Results view */
         .results-container {
             display: none;
             text-align: center;
@@ -268,7 +296,6 @@
             color: var(--text-muted);
             margin-bottom: 2rem;
         }
-
     </style>
 </head>
 <body>
@@ -283,143 +310,177 @@
         </div>
 
         <div class="quiz-body">
-            <!-- Questions Form / Container -->
-            <div id="quizForm">
-                
-                <!-- Pregunta 1 -->
-                <div class="question-container active" data-question="0">
-                    <div class="question-number">Pregunta 1 de 5</div>
-                    <div class="question-title">¿Qué nombre recibe la gran cinta transportadora oceánica global impulsada por diferencias de temperatura y salinidad?</div>
-                    <div class="options-list">
-                        <button class="option-btn" onclick="selectOption(this, 'A', 'B')">
-                            <span class="option-letter">A</span> Corriente de Humboldt
-                        </button>
-                        <button class="option-btn" onclick="selectOption(this, 'B', 'B')">
-                            <span class="option-letter">B</span> Circulación termohalina
-                        </button>
-                        <button class="option-btn" onclick="selectOption(this, 'C', 'B')">
-                            <span class="option-letter">C</span> Giro subtropical
-                        </button>
-                        <button class="option-btn" onclick="selectOption(this, 'D', 'B')">
-                            <span class="option-letter">D</span> Corriente del Golfo
-                        </button>
-                    </div>
-                    <div class="feedback-box" id="feedback-0">
-                        <strong>Nota:</strong> Regula el clima global al mover agua cálida y fría por todo el planeta.
-                    </div>
+            
+            <!-- PANTALLA DE ACCESO POR CLAVE -->
+            <div id="loginScreen">
+                <h3>Ingresa la clave proporcionada por tu docente</h3>
+                <input type="password" id="accessKey" class="login-input" placeholder="Ej. noveno 2026">
+                <div class="login-error" id="loginError">Clave incorrecta. Inténtalo de nuevo.</div>
+                <div>
+                    <button class="btn" onclick="verifyKey()">Ingresar al Cuestionario</button>
                 </div>
-
-                <!-- Pregunta 2 -->
-                <div class="question-container" data-question="1">
-                    <div class="question-number">Pregunta 2 de 5</div>
-                    <div class="question-title">¿Cuál es la principal causa química de la acidificación de los océanos?</div>
-                    <div class="options-list">
-                        <button class="option-btn" onclick="selectOption(this, 'A', 'C')">
-                            <span class="option-letter">A</span> El aumento de la temperatura superficial del agua.
-                        </button>
-                        <button class="option-btn" onclick="selectOption(this, 'B', 'C')">
-                            <span class="option-letter">B</span> El vertido de residuos plásticos y microplásticos.
-                        </button>
-                        <button class="option-btn" onclick="selectOption(this, 'C', 'C')">
-                            <span class="option-letter">C</span> La absorción de dióxido de carbono (CO₂) atmosférico por parte del agua de mar.
-                        </button>
-                        <button class="option-btn" onclick="selectOption(this, 'D', 'C')">
-                            <span class="option-letter">D</span> La escorrentía de fertilizantes agrícolas ricos en nitrógeno.
-                        </button>
-                    </div>
-                    <div class="feedback-box" id="feedback-1">
-                        <strong>Nota:</strong> Al disolverse el CO₂, se forma ácido carbónico, lo que disminuye el pH del agua y afecta a organismos con conchas calcáreas.
-                    </div>
-                </div>
-
-                <!-- Pregunta 3 -->
-                <div class="question-container" data-question="2">
-                    <div class="question-number">Pregunta 3 de 5</div>
-                    <div class="question-title">¿Qué tecnología se utiliza principalmente para mapear el fondo marino mediante la emisión de pulsos acústicos desde un barco?</div>
-                    <div class="options-list">
-                        <button class="option-btn" onclick="selectOption(this, 'A', 'C')">
-                            <span class="option-letter">A</span> Radar de apertura sintética (SAR)
-                        </button>
-                        <button class="option-btn" onclick="selectOption(this, 'B', 'C')">
-                            <span class="option-letter">B</span> Espectroscopía infrarroja
-                        </button>
-                        <button class="option-btn" onclick="selectOption(this, 'C', 'C')">
-                            <span class="option-letter">C</span> Sonar multihaz (Multibeam sonar)
-                        </button>
-                        <button class="option-btn" onclick="selectOption(this, 'D', 'C')">
-                            <span class="option-letter">D</span> LiDAR aerotransportado
-                        </button>
-                    </div>
-                    <div class="feedback-box" id="feedback-2">
-                        <strong>Nota:</strong> Permite obtener imágenes y modelos batimétricos de alta resolución del relieve submarino.
-                    </div>
-                </div>
-
-                <!-- Pregunta 4 -->
-                <div class="question-container" data-question="3">
-                    <div class="question-number">Pregunta 4 de 5</div>
-                    <div class="question-title">¿En qué zona del océano se encuentra la mayor parte de la biomasa marina y ocurre la fotosíntesis?</div>
-                    <div class="options-list">
-                        <button class="option-btn" onclick="selectOption(this, 'A', 'B')">
-                            <span class="option-letter">A</span> Zona abisal
-                        </button>
-                        <button class="option-btn" onclick="selectOption(this, 'B', 'B')">
-                            <span class="option-letter">B</span> Zona eufótica (o fótica)
-                        </button>
-                        <button class="option-btn" onclick="selectOption(this, 'C', 'B')">
-                            <span class="option-letter">C</span> Zona batial
-                        </button>
-                        <button class="option-btn" onclick="selectOption(this, 'D', 'B')">
-                            <span class="option-letter">D</span> Zona hadal
-                        </button>
-                    </div>
-                    <div class="feedback-box" id="feedback-3">
-                        <strong>Nota:</strong> Es la capa superior del océano donde penetra la luz solar suficiente para que el fitoplancton realice la fotosíntesis.
-                    </div>
-                </div>
-
-                <!-- Pregunta 5 -->
-                <div class="question-container" data-question="4">
-                    <div class="question-number">Pregunta 5 de 5</div>
-                    <div class="question-title">¿Qué fenómeno oceanográfico y meteorológico altera periódicamente las corrientes en el Pacífico ecuatorial, afectando el clima global?</div>
-                    <div class="options-list">
-                        <button class="option-btn" onclick="selectOption(this, 'A', 'A')">
-                            <span class="option-letter">A</span> La Corriente de El Niño (ENSO)
-                        </button>
-                        <button class="option-btn" onclick="selectOption(this, 'B', 'A')">
-                            <span class="option-letter">B</span> La oscilación decadal del Pacífico
-                        </button>
-                        <button class="option-btn" onclick="selectOption(this, 'C', 'A')">
-                            <span class="option-letter">C</span> El colapso del vórtice polar
-                        </button>
-                        <button class="option-btn" onclick="selectOption(this, 'D', 'A')">
-                            <span class="option-letter">D</span> Las mareas vivas equinocciales
-                        </button>
-                    </div>
-                    <div class="feedback-box" id="feedback-4">
-                        <strong>Nota:</strong> Forma parte de El Niño-Oscilación del Sur, alterando los patrones de lluvia y temperatura en múltiples continentes.
-                    </div>
-                </div>
-
-                <!-- Controles de navegación -->
-                <div class="btn-container" style="margin-top: 2rem;">
-                    <button class="btn" id="nextBtn" onclick="nextQuestion()" disabled>Siguiente</button>
-                </div>
-
             </div>
 
-            <!-- Contenedor de Resultados -->
-            <div class="results-container" id="resultsContainer">
-                <h2>¡Cuestionario Completado!</h2>
-                <div class="score-circle" id="scoreCircle">0/5</div>
-                <div class="results-msg" id="resultsMsg">Has finalizado la prueba interactiva sobre los océanos.</div>
-                <button class="btn" onclick="restartQuiz()">Reiniciar Cuestionario</button>
+            <!-- APLICACIÓN PRINCIPAL (OCULTA HASTA VALIDAR) -->
+            <div class="main-app" id="mainApp">
+                <div id="quizForm">
+                    
+                    <!-- Pregunta 1 -->
+                    <div class="question-container active" data-question="0">
+                        <div class="question-number">Pregunta 1 de 5</div>
+                        <div class="question-title">¿Qué nombre recibe la gran cinta transportadora oceánica global impulsada por diferencias de temperatura y salinidad?</div>
+                        <div class="options-list">
+                            <button class="option-btn" onclick="selectOption(this, 'A', 'B')">
+                                <span class="option-letter">A</span> Corriente de Humboldt
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'B', 'B')">
+                                <span class="option-letter">B</span> Circulación termohalina
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'C', 'B')">
+                                <span class="option-letter">C</span> Giro subtropical
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'D', 'B')">
+                                <span class="option-letter">D</span> Corriente del Golfo
+                            </button>
+                        </div>
+                        <div class="feedback-box" id="feedback-0">
+                            <strong>Nota:</strong> Regula el clima global al mover agua cálida y fría por todo el planeta.
+                        </div>
+                    </div>
+
+                    <!-- Pregunta 2 -->
+                    <div class="question-container" data-question="1">
+                        <div class="question-number">Pregunta 2 de 5</div>
+                        <div class="question-title">¿Cuál es la principal causa química de la acidificación de los océanos?</div>
+                        <div class="options-list">
+                            <button class="option-btn" onclick="selectOption(this, 'A', 'C')">
+                                <span class="option-letter">A</span> El aumento de la temperatura superficial del agua.
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'B', 'C')">
+                                <span class="option-letter">B</span> El vertido de residuos plásticos y microplásticos.
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'C', 'C')">
+                                <span class="option-letter">C</span> La absorción de dióxido de carbono (CO₂) atmosférico por parte del agua de mar.
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'D', 'C')">
+                                <span class="option-letter">D</span> La escorrentía de fertilizantes agrícolas ricos en nitrógeno.
+                            </button>
+                        </div>
+                        <div class="feedback-box" id="feedback-1">
+                            <strong>Nota:</strong> Al disolverse el CO₂, se forma ácido carbónico, lo que disminuye el pH del agua y afecta a organismos con conchas calcáreas.
+                        </div>
+                    </div>
+
+                    <!-- Pregunta 3 -->
+                    <div class="question-container" data-question="2">
+                        <div class="question-number">Pregunta 3 de 5</div>
+                        <div class="question-title">¿Qué tecnología se utiliza principalmente para mapear el fondo marino mediante la emisión de pulsos acústicos desde un barco?</div>
+                        <div class="options-list">
+                            <button class="option-btn" onclick="selectOption(this, 'A', 'C')">
+                                <span class="option-letter">A</span> Radar de apertura sintética (SAR)
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'B', 'C')">
+                                <span class="option-letter">B</span> Espectroscopía infrarroja
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'C', 'C')">
+                                <span class="option-letter">C</span> Sonar multihaz (Multibeam sonar)
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'D', 'C')">
+                                <span class="option-letter">D</span> LiDAR aerotransportado
+                            </button>
+                        </div>
+                        <div class="feedback-box" id="feedback-2">
+                            <strong>Nota:</strong> Permite obtener imágenes y modelos batimétricos de alta resolución del relieve submarino.
+                        </div>
+                    </div>
+
+                    <!-- Pregunta 4 -->
+                    <div class="question-container" data-question="3">
+                        <div class="question-number">Pregunta 4 de 5</div>
+                        <div class="question-title">¿En qué zona del océano se encuentra la mayor parte de la biomasa marina y ocurre la fotosíntesis?</div>
+                        <div class="options-list">
+                            <button class="option-btn" onclick="selectOption(this, 'A', 'B')">
+                                <span class="option-letter">A</span> Zona abisal
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'B', 'B')">
+                                <span class="option-letter">B</span> Zona eufótica (o fótica)
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'C', 'B')">
+                                <span class="option-letter">C</span> Zona batial
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'D', 'B')">
+                                <span class="option-letter">D</span> Zona hadal
+                            </button>
+                        </div>
+                        <div class="feedback-box" id="feedback-3">
+                            <strong>Nota:</strong> Es la capa superior del océano donde penetra la luz solar suficiente para que el fitoplancton realice la fotosíntesis.
+                        </div>
+                    </div>
+
+                    <!-- Pregunta 5 -->
+                    <div class="question-container" data-question="4">
+                        <div class="question-number">Pregunta 5 de 5</div>
+                        <div class="question-title">¿Qué fenómeno oceanográfico y meteorológico altera periódicamente las corrientes en el Pacífico ecuatorial, afectando el clima global?</div>
+                        <div class="options-list">
+                            <button class="option-btn" onclick="selectOption(this, 'A', 'A')">
+                                <span class="option-letter">A</span> La Corriente de El Niño (ENSO)
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'B', 'A')">
+                                <span class="option-letter">B</span> La oscilación decadal del Pacífico
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'C', 'A')">
+                                <span class="option-letter">C</span> El colapso del vórtice polar
+                            </button>
+                            <button class="option-btn" onclick="selectOption(this, 'D', 'A')">
+                                <span class="option-letter">D</span> Las mareas vivas equinocciales
+                            </button>
+                        </div>
+                        <div class="feedback-box" id="feedback-4">
+                            <strong>Nota:</strong> Forma parte de El Niño-Oscilación del Sur, alterando los patrones de lluvia y temperatura en múltiples continentes.
+                        </div>
+                    </div>
+
+                    <!-- Botón Siguiente -->
+                    <div class="btn-container" style="margin-top: 2rem;">
+                        <button class="btn" id="nextBtn" onclick="nextQuestion()" disabled>Siguiente</button>
+                    </div>
+
+                </div>
+
+                <!-- Resultados -->
+                <div class="results-container" id="resultsContainer">
+                    <h2>¡Cuestionario Completado!</h2>
+                    <div class="score-circle" id="scoreCircle">0/5</div>
+                    <div class="results-msg" id="resultsMsg">Has finalizado la prueba interactiva sobre los océanos.</div>
+                    <button class="btn" onclick="restartQuiz()">Reiniciar Cuestionario</button>
+                </div>
             </div>
 
         </div>
     </div>
 
     <script>
+        const CLAVE_CORRECTA = "noveno 2026";
+
+        function verifyKey() {
+            const inputVal = document.getElementById('accessKey').value.trim();
+            const errorDiv = document.getElementById('loginError');
+
+            if (inputVal === CLAVE_CORRECTA) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                document.getElementById('progressBar').style.width = '20%';
+            } else {
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        document.getElementById('accessKey').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifyKey();
+            }
+        });
+
         let currentQuestion = 0;
         let score = 0;
         const totalQuestions = 5;
@@ -446,11 +507,9 @@
                 score++;
             }
 
-            // Mostrar feedback explicativo
             const feedbackBox = document.getElementById(`feedback-${currentQuestion}`);
             feedbackBox.style.display = 'block';
 
-            // Habilitar botón siguiente
             document.getElementById('nextBtn').disabled = false;
             if (currentQuestion === totalQuestions - 1) {
                 document.getElementById('nextBtn').textContent = 'Ver Resultados';
@@ -463,15 +522,12 @@
             document.getElementById('nextBtn').disabled = true;
 
             if (currentQuestion < totalQuestions) {
-                // Cambiar pregunta activa
                 document.querySelectorAll('.question-container').forEach(el => el.classList.remove('active'));
                 document.querySelector(`.question-container[data-question="${currentQuestion}"]`).classList.add('active');
                 
-                // Actualizar barra de progreso
                 const progress = ((currentQuestion) / totalQuestions) * 100;
                 document.getElementById('progressBar').style.width = progress + '%';
             } else {
-                // Mostrar resultados
                 document.getElementById('quizForm').style.display = 'none';
                 document.getElementById('resultsContainer').style.display = 'block';
                 document.getElementById('progressBar').style.width = '100%';
@@ -508,7 +564,7 @@
 
             document.querySelectorAll('.option-btn').forEach(btn => {
                 btn.disabled = false;
-                btn.classList.remove('correct', 'incorrect', 'selected');
+                btn.classList.remove('correct', 'incorrect');
             });
 
             document.querySelectorAll('.feedback-box').forEach(fb => {
